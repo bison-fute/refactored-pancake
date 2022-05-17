@@ -1,1 +1,4 @@
 SpeechCommands/
+processed_test_set_downsampled.bin
+processed_train_set_downsampled.bin
+processed_validation_set_downsampled.bin
