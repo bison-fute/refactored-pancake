@@ -66,7 +66,7 @@ def collate_fn(batch):
 
 
 # sets in to dataloaders
-batch_size = 16
+batch_size = 256
 train_loader = torch.utils.data.DataLoader(
     train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn,
     num_workers=num_workers, pin_memory=pin_memory)
@@ -149,7 +149,6 @@ for epoch in tqdm(range(nb_epochs)):
             target = target.to(device)
             data = data.to(device, dtype=torch.float)
             output = model(data.unsqueeze(1))
-            print(output)
             _,pred = torch.max(output,1)
 
             loss = F.nll_loss(output, target)
