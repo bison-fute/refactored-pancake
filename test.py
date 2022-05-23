@@ -146,7 +146,6 @@ for epoch in tqdm(range(nb_epochs)):
         _, pred = torch.max(output,1)
 
         # negative log-likelihood for tensor of size (batch x 1 x n_output)
-        # negative log-likelihood for tensor of size (batch x 1 x n_output)
         loss = nll_loss(m(output), target)
         optimizer.zero_grad()
         loss.backward()
@@ -162,11 +161,12 @@ for epoch in tqdm(range(nb_epochs)):
         valid_loss = 0
         for data, target in validation_loader:
             target = target.to(device)
+            data = (data - data.mean()) / data.std()
             data = data.to(device, dtype=torch.float)
             output = model(data.unsqueeze(1))
             _,pred = torch.max(output,1)
-            m = nn.LogSoftmax(dim=1)
             loss = nll_loss(m(output), target)
+            print(loss.item())
             valid_loss += loss.item()
     valid_loss = valid_loss * batch_size / len(validation_set)
     print('Val batch loss: {:.6f},'.format(valid_loss))
@@ -180,5 +180,6 @@ ax2 = ax1.twinx()
 ax2.plot(valid_loss_history, "g--", label="val_loss")
 ax2.set_ylabel('val')
 
-plt.legend()
+ax1.legend()
+ax2.legend()
 plt.savefig('plot.pdf')
