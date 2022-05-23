@@ -116,7 +116,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 20
+train_loss_history, nb_epochs = [], 50
 valid_loss_history = []
 for epoch in tqdm(range(nb_epochs)):
     # train and eval train loss
