@@ -89,7 +89,7 @@ validation_loader = torch.utils.data.DataLoader(
     validation_set, batch_size=batch_size, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 test_loader = torch.utils.data.DataLoader(
-    validation_set, batch_size=batch_size, shuffle=False, drop_last=False,
+    test_set, batch_size=batch_size, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 print(f"set up of dataloader done")
 
@@ -172,7 +172,13 @@ for epoch in tqdm(range(nb_epochs)):
     print('Val batch loss: {:.6f},'.format(valid_loss))
     valid_loss_history.append(valid_loss)
 
-plt.plot(train_loss_history, "r--", label="train_loss")
-plt.plot(valid_loss_history, "g--", label="val_loss")
+fig, ax1 = plt.subplots()
+ax1.plot(train_loss_history, "r--", label="train_loss")
+ax1.set_ylabel('train')
+
+ax2 = ax1.twinx()
+ax2.plot(valid_loss_history, "g--", label="val_loss")
+ax2.set_ylabel('val')
+
 plt.legend()
 plt.savefig('plot.pdf')
