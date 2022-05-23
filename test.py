@@ -143,13 +143,14 @@ for epoch in tqdm(range(nb_epochs)):
 
         # negative log-likelihood for tensor of size (batch x 1 x n_output)
         # negative log-likelihood for tensor of size (batch x 1 x n_output)
-        loss = +F.nll_loss(output, target)
+        loss = -F.nll_loss(output, target)
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
         train_loss += loss.item()
+    train_loss/=batch_size
     print('Train batch loss: {:.6f},'.format(train_loss))
     train_loss_history.append(loss)
 
@@ -164,7 +165,7 @@ for epoch in tqdm(range(nb_epochs)):
             output = model(data.unsqueeze(1))
             _,pred = torch.max(output,1)
 
-            loss = F.nll_loss(output, target)
+            loss = -F.nll_loss(output, target)
             valid_loss += loss.item()
     valid_loss_history.append(valid_loss)
 
