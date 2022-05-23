@@ -2,6 +2,8 @@ from libraries import *
 from preprocessing import downloading_loading_processed_files
 import torchvision.transforms as T
 from utils import enframe
+import torch.nn as nn
+
 warnings.filterwarnings("ignore")
 
 # selecting GPU if possible
@@ -129,7 +131,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 5
+train_loss_history, nb_epochs = [], 50
 valid_loss_history = []
 for epoch in tqdm(range(nb_epochs)):
     # train and eval train loss
@@ -143,12 +145,12 @@ for epoch in tqdm(range(nb_epochs)):
 
         # negative log-likelihood for tensor of size (batch x 1 x n_output)
         # negative log-likelihood for tensor of size (batch x 1 x n_output)
-        loss = -F.nll_loss(output, target)
-
+        m = nn.LogSoftmax(dim=1)
+        nll_loss = nn.NLLLoss()
+        loss = nll_loss(m(output), target)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
         train_loss += loss.item()
     train_loss/=batch_size
     print('Train batch loss: {:.6f},'.format(train_loss))
@@ -159,13 +161,13 @@ for epoch in tqdm(range(nb_epochs)):
         model.eval()
         valid_loss = 0
         for data, target in validation_loader:
-
             target = target.to(device)
             data = data.to(device, dtype=torch.float)
             output = model(data.unsqueeze(1))
             _,pred = torch.max(output,1)
-
-            loss = -F.nll_loss(output, target)
+            m = nn.LogSoftmax(dim=1)
+            nll_loss = nn.NLLLoss()
+            loss = nll_loss(m(output), target)
             valid_loss += loss.item()
     valid_loss_history.append(valid_loss)
 
