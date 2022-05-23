@@ -172,14 +172,27 @@ for epoch in tqdm(range(nb_epochs)):
     print('Val batch loss: {:.6f},'.format(valid_loss))
     valid_loss_history.append(valid_loss)
 
-fig, ax1 = plt.subplots()
-ax1.plot(train_loss_history, "r--", label="train_loss")
-ax1.set_ylabel('train')
 
-ax2 = ax1.twinx()
-ax2.plot(valid_loss_history, "g--", label="val_loss")
-ax2.set_ylabel('val')
-
-ax1.legend()
-ax2.legend()
+plt.plot(train_loss_history, "r--", label="train_loss")
+plt.plot(valid_loss_history, "g--", label="val_loss")
+plt.ylabel('loss')
+plt.xlabel('epoch')
 plt.savefig('plot.pdf')
+print('training graph generated')
+
+torch.save(model, 'model.pth')
+print('model saved')
+
+##Show testing part :
+print('start test')
+data, target=next(iter(test_loader))
+target = target.to(device)
+data = (data - data.mean()) / data.std()
+data = data.to(device, dtype=torch.float)
+output = model(data.unsqueeze(1))
+_,pred = torch.max(output,1)
+for i in range(10):
+    print(pred[i], target[i])
+print('end test')
+
+
