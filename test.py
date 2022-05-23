@@ -1,5 +1,6 @@
 from libraries import *
 from preprocessing import downloading_loading_processed_files
+import torchvision.transforms as T
 from utils import enframe
 warnings.filterwarnings("ignore")
 
@@ -37,7 +38,17 @@ def pad_sequence(batch):
     """
     batch = [torch.from_numpy(item) for item in batch]
     batch = torch.nn.utils.rnn.pad_sequence(batch, batch_first=True, padding_value=0.)
+    print(np.unique([batc.shape for batc in batch]))
     return batch.permute(0, 2, 1)  # in each tensor, target first, tensor second
+
+def resize_sequence(batch):
+    """
+    desc: make all tensor in a batch the same length as the longest sequence by padding with zeros
+    """
+    batch = [T.Resize((105,13))(torch.from_numpy(np.array([item])))[0] for item in batch]
+    batch = torch.nn.utils.rnn.pad_sequence(batch, batch_first=True, padding_value=0.)
+    return batch.permute(0, 2, 1)  # in each tensor, target first, tensor second
+
 
 
 # encoding each word using its index in the list of labels
@@ -60,7 +71,9 @@ def collate_fn(batch):
         targets += [label_to_index(label)]
 
     # Group the list of tensors into a batched tensor
-    tensors = pad_sequence(tensors)
+    # tensors = pad_sequence(tensors)
+    tensors = resize_sequence(tensors)
+    # print(np.unique(np.array([tensor.shape for tensor in tensors])))
     targets = torch.stack(targets)
     return tensors, targets
 
@@ -116,7 +129,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 50
+train_loss_history, nb_epochs = [], 5
 valid_loss_history = []
 for epoch in tqdm(range(nb_epochs)):
     # train and eval train loss
