@@ -166,7 +166,6 @@ for epoch in tqdm(range(nb_epochs)):
             output = model(data.unsqueeze(1))
             _,pred = torch.max(output,1)
             loss = nll_loss(m(output), target)
-            print(loss.item())
             valid_loss += loss.item()
     valid_loss = valid_loss * batch_size / len(validation_set)
     print('Val batch loss: {:.6f},'.format(valid_loss))
