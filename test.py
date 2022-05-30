@@ -195,7 +195,6 @@ total_recall=0
 for batch_idx, (data, target) in enumerate(test_loader):
     target = target
     data = (data - data.mean()) / data.std()
-    data = data.to(device, dtype=torch.float)
     output = model(data.unsqueeze(1))
     _, pred = torch.max(output, 1)
     total_precision+=precision_score(target, pred, average='macro')
