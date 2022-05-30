@@ -34,6 +34,7 @@ def remove_nan_in(dataset):
 
 train_set = remove_nan_in(train_set)
 validation_set = remove_nan_in(validation_set)
+test_set=remove_nan_in(test_set)
 
 
 def pad_sequence(batch):
@@ -132,7 +133,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 0
+train_loss_history, nb_epochs = [], 50
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
@@ -189,19 +190,20 @@ print('start test')
 
 
 #
-total_output=[]
-total_pred=[]
+total_precision=0
+total_recall=0
 for batch_idx, (data, target) in enumerate(test_loader):
     target = target.to(device)
     data = (data - data.mean()) / data.std()
     data = data.to(device, dtype=torch.float)
     output = model(data.unsqueeze(1))
     _, pred = torch.max(output, 1)
-    total_output+=list(output)
-    total_pred+=list(pred)
+    total_precision+=precision_score(target, pred, average='macro')
+    total_recall+=recall_score(target, pred, average='macro')
+mean_precision=total_precision/(batch_idx+1)
+mean_recall=total_recall/(batch_idx+1)
 
-
-print('F1: {}'.format(f1_score(total_output, total_pred, average="samples")))
-print('Precision: {}'.format(precision_score(total_output, total_pred, average="samples")))
-print('Recall: {}'.format(recall_score(total_output, total_pred, average="samples")))
+# print('F1: {}'.format(f1_score(total_output, total_pred, average="samples")))
+print('Precision: {}'.format(mean_precision))
+print('Recall: {}'.format(mean_recall))
 print('end test')
