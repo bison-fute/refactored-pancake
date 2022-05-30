@@ -3,6 +3,7 @@ from preprocessing import downloading_loading_processed_files
 import torchvision.transforms as T
 from utils import enframe
 import torch.nn as nn
+from sklearn.metrics import f1_score, precision_score, recall_score
 
 warnings.filterwarnings("ignore")
 
@@ -50,7 +51,6 @@ def resize_sequence(batch):
     batch = [T.Resize((105,13))(torch.from_numpy(np.array([item])))[0] for item in batch]
     batch = torch.nn.utils.rnn.pad_sequence(batch, batch_first=True, padding_value=0.)
     return batch.permute(0, 2, 1)  # in each tensor, target first, tensor second
-
 
 
 # encoding each word using its index in the list of labels
@@ -131,7 +131,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 50
+train_loss_history, nb_epochs = [], 1
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
@@ -176,6 +176,7 @@ plt.plot(train_loss_history, "r--", label="train_loss")
 plt.plot(valid_loss_history, "g--", label="val_loss")
 plt.ylabel('loss')
 plt.xlabel('epoch')
+plt.legend()
 plt.savefig('plot.pdf')
 print('training graph generated')
 
@@ -184,14 +185,22 @@ print('model saved')
 
 ##Show testing part :
 print('start test')
-data, target=next(iter(test_loader))
-target = target.to(device)
-data = (data - data.mean()) / data.std()
-data = data.to(device, dtype=torch.float)
-output = model(data.unsqueeze(1))
-_,pred = torch.max(output,1)
-for i in range(10):
-    print(pred[i], target[i])
+
+
+#
+total_output=[]
+total_pred=[]
+for batch_idx, (data, target) in enumerate(test_loader):
+    target = target.to(device)
+    data = (data - data.mean()) / data.std()
+    data = data.to(device, dtype=torch.float)
+    output = model(data.unsqueeze(1))
+    _, pred = torch.max(output, 1)
+    total_output+=output
+    total_pred+=pred
+
+
+print('F1: {}'.format(f1_score(total_output, total_pred, average="samples")))
+print('Precision: {}'.format(precision_score(total_output, total_pred, average="samples")))
+print('Recall: {}'.format(recall_score(total_output, total_pred, average="samples")))
 print('end test')
-
-
