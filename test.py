@@ -90,7 +90,7 @@ validation_loader = torch.utils.data.DataLoader(
     validation_set, batch_size=batch_size, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 test_loader = torch.utils.data.DataLoader(
-    test_set, batch_size=batch_size, shuffle=False, drop_last=False,
+    test_set, batch_size=2000, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 print(f"set up of dataloader done")
 
@@ -200,11 +200,11 @@ for batch_idx, (data, target) in enumerate(test_loader):
     _, pred = torch.max(output, 1)
     total_precision+=precision_score(target, pred, average='macro')
     total_recall+=recall_score(target, pred, average='macro')
-print(batch_idx)
+    break
 mean_precision=total_precision/(batch_idx+1)
 mean_recall=total_recall/(batch_idx+1)
 
 # print('F1: {}'.format(f1_score(total_output, total_pred, average="samples")))
-print('Precision: {}'.format(mean_precision))
-print('Recall: {}'.format(mean_recall))
+print('Precision: {}'.format(total_precision))
+print('Recall: {}'.format(total_recall))
 print('end test')
