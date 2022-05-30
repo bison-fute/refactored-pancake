@@ -200,7 +200,6 @@ for batch_idx, (data, target) in enumerate(test_loader):
     _, pred = torch.max(output, 1)
     total_precision+=precision_score(target, pred, average='macro')
     total_recall+=recall_score(target, pred, average='macro')
-    break
 mean_precision=total_precision/(batch_idx+1)
 mean_recall=total_recall/(batch_idx+1)
 
