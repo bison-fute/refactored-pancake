@@ -43,7 +43,6 @@ def pad_sequence(batch):
     """
     batch = [torch.from_numpy(item) for item in batch]
     batch = torch.nn.utils.rnn.pad_sequence(batch, batch_first=True, padding_value=0.)
-    print(np.unique([batc.shape for batc in batch]))
     return batch.permute(0, 2, 1)  # in each tensor, target first, tensor second
 
 def resize_sequence(batch):
@@ -75,8 +74,8 @@ def collate_fn(batch):
         targets += [label_to_index(label)]
 
     # Group the list of tensors into a batched tensor
-    # tensors = pad_sequence(tensors)
-    tensors = resize_sequence(tensors)
+    tensors = pad_sequence(tensors)
+    # tensors = resize_sequence(tensors)
     # print(np.unique(np.array([tensor.shape for tensor in tensors])))
     targets = torch.stack(targets)
     return tensors, targets
