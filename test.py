@@ -132,7 +132,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 50
+train_loss_history, nb_epochs = [], 7
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
