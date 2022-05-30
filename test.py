@@ -9,6 +9,7 @@ warnings.filterwarnings("ignore")
 
 # selecting GPU if possible
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 print(f"running on GPU = {str(device) == 'cuda'}")
 
 # (down)loading split datasets, can be run twice if kernel dies 1st time
@@ -131,7 +132,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 50
+train_loss_history, nb_epochs = [], 0
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
@@ -196,8 +197,8 @@ for batch_idx, (data, target) in enumerate(test_loader):
     data = data.to(device, dtype=torch.float)
     output = model(data.unsqueeze(1))
     _, pred = torch.max(output, 1)
-    total_output+=output
-    total_pred+=pred
+    total_output+=list(output)
+    total_pred+=list(pred)
 
 
 print('F1: {}'.format(f1_score(total_output, total_pred, average="samples")))
