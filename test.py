@@ -101,7 +101,7 @@ class CnnAudioNet(nn.Module):
         super(CnnAudioNet, self).__init__()
         self.NumClasses = NumClasses
         self.Fc_features = 128
-        self.C1 = nn.Conv2d(1, 32, 80)
+        self.C1 = nn.Conv2d(1, 32, 10)
         self.BN1 = nn.BatchNorm2d(32)
         self.C2 = nn.Conv2d(32, 32, 3)  # change size of batch norm?
         self.C3 = nn.Conv2d(32, 64, 3)
