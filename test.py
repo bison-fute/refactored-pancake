@@ -90,7 +90,7 @@ validation_loader = torch.utils.data.DataLoader(
     validation_set, batch_size=batch_size, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 test_loader = torch.utils.data.DataLoader(
-    test_set, batch_size=2000, shuffle=False, drop_last=False,
+    test_set, batch_size=2000, shuffle=True, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 print(f"set up of dataloader done")
 
@@ -189,7 +189,7 @@ print('start test')
 
 
 #
-model= torch.load('model.pth')
+model= torch.load('model.pth').to(device)
 total_precision=0
 total_recall=0
 for batch_idx, (data, target) in enumerate(test_loader):
