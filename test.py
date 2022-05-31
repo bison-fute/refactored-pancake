@@ -74,8 +74,8 @@ def collate_fn(batch):
         targets += [label_to_index(label)]
 
     # Group the list of tensors into a batched tensor
-    tensors = pad_sequence(tensors)
-    # tensors = resize_sequence(tensors)
+    # tensors = pad_sequence(tensors)
+    tensors = resize_sequence(tensors)
     # print(np.unique(np.array([tensor.shape for tensor in tensors])))
     targets = torch.stack(targets)
     return tensors, targets
@@ -101,27 +101,34 @@ class CnnAudioNet(nn.Module):
         super(CnnAudioNet, self).__init__()
         self.NumClasses = NumClasses
         self.Fc_features = 128
-        self.C1 = nn.Conv2d(1, 32, 5)
+        self.C1 = nn.Conv2d(1, 32, (3,5), padding=1)
+        self.C2 = nn.Conv2d(32, 32, (3,5), padding=1)  # change size of batch norm?
+        self.C3 = nn.Conv2d(32, 64, (3,5), padding=1)
+        self.C4 = nn.Conv2d(64, 64, (3,5), padding=1)
+
         self.BN1 = nn.BatchNorm2d(32)
-        self.C2 = nn.Conv2d(32, 32, 3)  # change size of batch norm?
-        self.C3 = nn.Conv2d(32, 64, 1)
         self.BN2 = nn.BatchNorm2d(64)
-        self.C4 = nn.Conv2d(64, 64, 1)
-        self.fc1 = nn.Linear(1536, 128)
+        self.BN3 = nn.BatchNorm2d(64)
+
+        self.fc1 = nn.Linear(3648, 128)
         self.fc2 = nn.Linear(128, self.NumClasses)
         self.maxpool1 = nn.MaxPool2d(2, 2)
+        self.maxpool2 = nn.MaxPool2d((1,2), (1,2))
+
         self.dropout = nn.Dropout(0.25)
 
 
     def forward(self, x):
-        x = self.maxpool1(F.relu(self.BN1(self.C1(x))))
+        x = F.relu(self.BN1(self.C1(x)))
         x = self.maxpool1(F.relu(self.BN1(self.C2(x))))
-        x = self.maxpool1(F.relu(self.BN2(self.C3(x))))
+        x = F.relu(self.BN2(self.C3(x)))
         x = self.maxpool1(F.relu(self.BN2(self.C4(x))))
-        x = (x.view(-1, np.prod(x.shape[1:])))  # self.dropout
+        x = F.relu(self.BN2(self.C4(x)))
+        x = F.relu(self.BN3(self.C4(x)))
+        # x = (x.view(-1, np.prod(x.shape[1:])))  # self.dropout
+        x = self.dropout(x.view(-1, np.prod(x.shape[1:])))
         # dim to know here for fully connected
-        # print(x.shape)
-        x = self.dropout(self.fc1(x))
+        x = self.fc1(x)
         x = self.fc2(x)
         return x
 
