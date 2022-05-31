@@ -136,53 +136,53 @@ train_loss_history, nb_epochs = [], 8
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
-for epoch in tqdm(range(nb_epochs)):
-    # train and eval train loss
-    train_loss = 0.0
-    for batch_idx, (data, target) in enumerate(train_loader):
-        target = target.to(device)
-        data = (data-data.mean())/data.std()
-        data = data.to(device, dtype=torch.float)
-        output = model(data.unsqueeze(1))
-        _, pred = torch.max(output,1)
-
-        # negative log-likelihood for tensor of size (batch x 1 x n_output)
-        loss = nll_loss(m(output), target)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        train_loss += loss.item()
-    train_loss=train_loss*batch_size/len(train_set)
-    print('Train batch loss: {:.6f},'.format(train_loss))
-    train_loss_history.append(train_loss)
-
-    # eval val loss
-    with torch.no_grad():
-        model.eval()
-        valid_loss = 0
-        for data, target in validation_loader:
-            target = target.to(device)
-            data = (data - data.mean()) / data.std()
-            data = data.to(device, dtype=torch.float)
-            output = model(data.unsqueeze(1))
-            _,pred = torch.max(output,1)
-            loss = nll_loss(m(output), target)
-            valid_loss += loss.item()
-    valid_loss = valid_loss * batch_size / len(validation_set)
-    print('Val batch loss: {:.6f},'.format(valid_loss))
-    valid_loss_history.append(valid_loss)
-
-
-plt.plot(train_loss_history, "r--", label="train_loss")
-plt.plot(valid_loss_history, "g--", label="val_loss")
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend()
-plt.savefig('plot.pdf')
-print('training graph generated')
-
-torch.save(model, 'model.pth')
-print('model saved')
+# for epoch in tqdm(range(nb_epochs)):
+#     # train and eval train loss
+#     train_loss = 0.0
+#     for batch_idx, (data, target) in enumerate(train_loader):
+#         target = target.to(device)
+#         data = (data-data.mean())/data.std()
+#         data = data.to(device, dtype=torch.float)
+#         output = model(data.unsqueeze(1))
+#         _, pred = torch.max(output,1)
+#
+#         # negative log-likelihood for tensor of size (batch x 1 x n_output)
+#         loss = nll_loss(m(output), target)
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+#         train_loss += loss.item()
+#     train_loss=train_loss*batch_size/len(train_set)
+#     print('Train batch loss: {:.6f},'.format(train_loss))
+#     train_loss_history.append(train_loss)
+#
+#     # eval val loss
+#     with torch.no_grad():
+#         model.eval()
+#         valid_loss = 0
+#         for data, target in validation_loader:
+#             target = target.to(device)
+#             data = (data - data.mean()) / data.std()
+#             data = data.to(device, dtype=torch.float)
+#             output = model(data.unsqueeze(1))
+#             _,pred = torch.max(output,1)
+#             loss = nll_loss(m(output), target)
+#             valid_loss += loss.item()
+#     valid_loss = valid_loss * batch_size / len(validation_set)
+#     print('Val batch loss: {:.6f},'.format(valid_loss))
+#     valid_loss_history.append(valid_loss)
+#
+#
+# plt.plot(train_loss_history, "r--", label="train_loss")
+# plt.plot(valid_loss_history, "g--", label="val_loss")
+# plt.ylabel('loss')
+# plt.xlabel('epoch')
+# plt.legend()
+# plt.savefig('plot.pdf')
+# print('training graph generated')
+#
+# torch.save(model, 'model.pth')
+# print('model saved')
 
 ##Show testing part :
 print('start test')
