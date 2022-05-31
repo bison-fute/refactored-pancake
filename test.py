@@ -104,7 +104,7 @@ class CnnAudioNet(nn.Module):
         self.C1 = nn.Conv2d(1, 32, 10)
         self.BN1 = nn.BatchNorm2d(32)
         self.C2 = nn.Conv2d(32, 32, 3)  # change size of batch norm?
-        self.C3 = nn.Conv2d(32, 64, 3)
+        self.C3 = nn.Conv2d(32, 64, 1)
         self.BN2 = nn.BatchNorm2d(64)
         self.C4 = nn.Conv2d(64, 64, 1)
         self.fc1 = nn.Linear(1536, 128)
