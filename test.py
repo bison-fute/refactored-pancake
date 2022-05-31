@@ -139,10 +139,11 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 50
+train_loss_history, nb_epochs = [], 20
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
+best_val_loss=999999
 for epoch in tqdm(range(nb_epochs)):
     # train and eval train loss
     train_loss = 0.0
@@ -178,6 +179,12 @@ for epoch in tqdm(range(nb_epochs)):
     valid_loss = valid_loss * batch_size / len(validation_set)
     print('Val batch loss: {:.6f},'.format(valid_loss))
     valid_loss_history.append(valid_loss)
+    if valid_loss<best_val_loss:
+        best_val_loss=valid_loss
+        best_epoch = epoch
+        torch.save(model, 'model.pth')
+        print('model saved')
+
 
 
 plt.plot(train_loss_history, "r--", label="train_loss")
@@ -187,14 +194,10 @@ plt.xlabel('epoch')
 plt.legend()
 plt.savefig('plot.pdf')
 print('training graph generated')
-
-torch.save(model, 'model.pth')
-print('model saved')
+print('best epoch was', best_epoch)
 
 ##Show testing part :
 print('start test')
-
-
 #
 model= torch.load('model.pth').to(device)
 total_precision=0
