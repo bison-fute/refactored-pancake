@@ -198,8 +198,8 @@ for batch_idx, (data, target) in enumerate(test_loader):
     data = data.to(device, dtype=torch.float)
     output = model(data.unsqueeze(1)).to('cpu')
     _, pred = torch.max(output, 1)
-    total_precision+=precision_score(target, pred, average='macro')
-    total_recall+=recall_score(target, pred, average='macro')
+    total_precision+=precision_score(target, pred, average='weighted')
+    total_recall+=recall_score(target, pred, average='weighted')
 mean_precision=total_precision/(batch_idx)
 mean_recall=total_recall/(batch_idx)
 
