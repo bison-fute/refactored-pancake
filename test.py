@@ -90,7 +90,7 @@ validation_loader = torch.utils.data.DataLoader(
     validation_set, batch_size=batch_size, shuffle=False, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 test_loader = torch.utils.data.DataLoader(
-    test_set, batch_size=2000, shuffle=True, drop_last=False,
+    test_set, batch_size=256, shuffle=True, drop_last=False,
     collate_fn=collate_fn, num_workers=num_workers, pin_memory=pin_memory)
 print(f"set up of dataloader done")
 
@@ -139,7 +139,7 @@ optimizer = optim.Adam(params=model.parameters(), lr=0.001)
 
 # run first with - F.nll_loss 10 iterations, than +F.nll_loss 20 iterations, it works starts to have results, lr 1e-3
 model.train()
-train_loss_history, nb_epochs = [], 8
+train_loss_history, nb_epochs = [], 50
 valid_loss_history = []
 m = nn.LogSoftmax(dim=1)
 nll_loss = nn.NLLLoss()
