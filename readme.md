@@ -1,0 +1,4 @@
+# ASR Project:
+## Deep Learning Speech Classification and LMFCC improvements
+
+The Automatic Speech Recognition (ASR) project aims at developing an automatic speech classification system based on deep learning. The system uses recurrent neural networks (RNN) to encode the acoustic features of sound signals and classify them into different categories according to their semantic content. The project also explored possible improvements to the computation of *Mel frequency cepstral coefficients* (MFCC), which are compact and robust representations of speech. The paper "ASR Project: Deep Learning Speech Classification and LMFCC improvements" presents the results obtained by the system and the methods used to optimize them.

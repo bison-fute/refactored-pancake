@@ -36,7 +36,6 @@ train_set = remove_nan_in(train_set)
 validation_set = remove_nan_in(validation_set)
 test_set=remove_nan_in(test_set)
 
-
 def pad_sequence(batch):
     """
     desc: make all tensor in a batch the same length as the longest sequence by padding with zeros
